@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-// 🔥 Data pools
 const names = ["Mani", "Vishnu", "Harish", "Rahul", "Amit", "Kiran"];
 const skills = ["React", "Node", "UI/UX", "AI", "Backend", "Python"];
 
@@ -24,7 +23,7 @@ export default function TeamBuilder() {
         newTeam.push({
           name: shuffledNames[i],
           skills: randomSkill,
-          match: match
+          match
         });
       }
 
@@ -33,83 +32,125 @@ export default function TeamBuilder() {
     }, 1200);
   };
 
-  // 🔥 Best match logic
   const bestMatch = team.length
     ? Math.max(...team.map((t) => t.match))
+    : 0;
+
+  const avgMatch = team.length
+    ? Math.round(team.reduce((a, b) => a + b.match, 0) / team.length)
     : 0;
 
   return (
     <div style={container}>
       <h2 style={title}>🤖 AI Team Builder</h2>
 
+      {/* 🔥 SYSTEM STATUS */}
+      <p style={status}>⚡ System Status: AI Engine Active</p>
+
       <button style={btn} onClick={generateTeam}>
-        Generate Team
+        {loading ? "Generating Smart Team..." : "Generate Team"}
       </button>
 
+      {/* 🔥 AI THINKING EFFECT */}
       {loading && (
-        <p style={loadingText}>
-          🔄 AI analyzing skills and compatibility...
+        <p className="loading">
+          🤖 Analyzing skills...
+          <br />
+          🔍 Matching compatibility...
+          <br />
+          ⚡ Optimizing team balance...
+        </p>
+      )}
+
+      {team.length > 0 && (
+        <p style={stats}>
+          ⚡ Avg Match: {avgMatch}% | 🎯 Efficiency: High
         </p>
       )}
 
       <div style={grid}>
-        {team.map((t, i) => (
-          <div
-            key={i}
-            style={{
-              ...card,
-              border:
-                t.match === bestMatch
-                  ? "2px solid cyan"
-                  : "1px solid rgba(0,255,255,0.2)",
-              boxShadow:
-                t.match === bestMatch
-                  ? "0 0 20px cyan"
-                  : "0 0 8px rgba(0,255,255,0.2)"
-            }}
-          >
-            <h3 style={name}>
-              {t.name}
-              {t.match === bestMatch && (
-                <span style={badge}>⭐ Best Match</span>
-              )}
-            </h3>
+        {team.map((t, i) => {
+          const role =
+            t.skills === "React" || t.skills === "UI/UX"
+              ? "Frontend"
+              : t.skills === "Node" || t.skills === "Backend"
+              ? "Backend"
+              : "AI";
 
-            <p style={skill}>{t.skills}</p>
+          return (
+            <div
+              key={i}
+              className="card-hover"
+              style={{
+                ...card,
+                border:
+                  t.match === bestMatch
+                    ? "2px solid cyan"
+                    : "1px solid rgba(0,255,255,0.2)",
+                boxShadow:
+                  t.match === bestMatch
+                    ? "0 0 20px cyan"
+                    : "0 0 8px rgba(0,255,255,0.2)"
+              }}
+            >
+              <h3 style={name}>
+                {t.name}
+                {t.match === bestMatch && (
+                  <span style={badge}>⭐ Best Match</span>
+                )}
+              </h3>
 
-            <p style={match}>Match: {t.match}%</p>
+              <p style={skill}>{t.skills}</p>
 
-            {/* 🔥 Progress Bar */}
-            <div style={bar}>
-              <div
-                style={{
-                  ...fill,
-                  width: `${t.match}%`
-                }}
-              ></div>
+              <span style={tag}>{role}</span>
+
+              <p style={match}>Match: {t.match}%</p>
+
+              <p style={confidence}>AI Confidence: High</p>
+
+              <div style={bar}>
+                <div style={{ ...fill, width: `${t.match}%` }}></div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
+      {/* 🔥 FINAL DECISION LINE */}
+      {team.length > 0 && (
+        <p style={decision}>
+          💡 Final AI Decision: This team has the highest success probability.
+        </p>
+      )}
     </div>
   );
 }
 
-/* 🔥 STYLES */
+/* STYLES */
 
-const container = {
-  padding: 20,
-  animation: "fade 0.5s"
-};
+const container = { padding: 20, animation: "fade 0.5s" };
 
 const title = {
   color: "cyan",
   textShadow: "0 0 10px cyan"
 };
 
-const loadingText = {
+const status = {
+  fontSize: 12,
+  opacity: 0.7,
+  marginBottom: 10
+};
+
+const stats = {
   marginTop: 10,
-  opacity: 0.8
+  fontSize: 14,
+  opacity: 0.9
+};
+
+const decision = {
+  marginTop: 20,
+  color: "cyan",
+  fontWeight: "bold"
 };
 
 const btn = {
@@ -119,9 +160,7 @@ const btn = {
   background: "rgba(0,255,255,0.1)",
   color: "cyan",
   border: "1px solid cyan",
-  cursor: "pointer",
-  backdropFilter: "blur(10px)",
-  transition: "0.3s"
+  cursor: "pointer"
 };
 
 const grid = {
@@ -136,9 +175,7 @@ const card = {
   padding: 20,
   borderRadius: 15,
   width: 220,
-  color: "white",
-  backdropFilter: "blur(12px)",
-  transition: "0.3s"
+  backdropFilter: "blur(12px)"
 };
 
 const name = {
@@ -147,22 +184,25 @@ const name = {
   justifyContent: "center"
 };
 
-const skill = {
-  opacity: 0.8
-};
-
-const match = {
-  fontWeight: "bold",
-  marginTop: 5
-};
+const skill = { opacity: 0.8 };
+const match = { fontWeight: "bold" };
+const confidence = { fontSize: 12, opacity: 0.7 };
 
 const badge = {
-  color: "black",
   background: "cyan",
+  color: "black",
   padding: "3px 8px",
   borderRadius: 6,
-  fontSize: 12,
   marginLeft: 10
+};
+
+const tag = {
+  background: "rgba(0,255,255,0.2)",
+  padding: "4px 10px",
+  borderRadius: 20,
+  fontSize: 12,
+  marginTop: 5,
+  display: "inline-block"
 };
 
 const bar = {
@@ -176,6 +216,5 @@ const bar = {
 const fill = {
   height: "100%",
   background: "cyan",
-  borderRadius: 10,
   transition: "0.5s"
 };
